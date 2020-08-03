@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 const TOKEN_SECRET = "weojdjkfjowewejfwefjiwewefj";
 const sgMail = require("@sendgrid/mail");
 const shortid = require("shortid");
-// const shortid = require("shortid");
 const Finances = require("../models/finance.model");
 sgMail.setApiKey(
   "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"
@@ -36,9 +35,7 @@ module.exports.createUser = async function (req, res) {
       income: [],
       expense: [],
     };
-    const a = await Finances.insertMany(addMoney);
-    console.log(a);
-
+    await Finances.insertMany(addMoney);
     res.json(req.body);
   }
 };
@@ -54,15 +51,10 @@ module.exports.login = async function (req, res) {
   } else if (!bcrypt.compareSync(password, user.password)) {
     res.status(401).json({ msg: "Password wrong" });
   } else {
-    const token = jwt.sign({ _id: user._id }, TOKEN_SECRET);
-    res.header("auth-token", token);
-    const newuser = {
-      name: user.name,
-      email: user.email,
-      avatarUrl: user.avatarUrl,
-      token: token,
-    };
-    res.json(newuser);
+    const token = jwt.sign({ _id: user._id }, TOKEN_SECRET, {
+      expiresIn: 24 * 60 * 1000,
+    });
+    res.json(token);
   }
 };
 
@@ -125,7 +117,6 @@ module.exports.updateInfoUser = async function (req, res) {
       }
     );
   }
-
   res.json(body);
 };
 
@@ -142,7 +133,6 @@ module.exports.addCurrencyDefault = async function (req, res) {
 // Forget password
 module.exports.fogotPass = async function (req, res) {
   const email = req.body.email;
-
   const pass = shortid.generate();
   const password = bcrypt.hashSync(pass, 10);
   const msg = {

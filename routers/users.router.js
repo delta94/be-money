@@ -16,4 +16,5 @@ router.post("/checklogin", controller.checkLoggedIn);
 router.post("/forgot", controller.fogotPass);
 // Choose default currency
 router.post("/currency", controller.addCurrencyDefault);
+
 module.exports = router;
