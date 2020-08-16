@@ -530,9 +530,9 @@ module.exports.getDataCharBar = async function (req, res) {
 };
 
 // get Income
-
 module.exports.getIncome = async function (req, res) {
-  const id = req.params.id;
+  const id = req.tokenPayload._id;
+  console.log(id);
   const finance = await Finances.findOne({ idUser: id });
   const income = finance.income;
 

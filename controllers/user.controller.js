@@ -60,7 +60,7 @@ module.exports.login = async function (req, res) {
 
 // Check logged
 module.exports.checkLoggedIn = async function (req, res) {
-  const token = req.body.token;
+  const token = req.headers["auth"];
   if (token === null) {
     res.status(401).json({ msg: "No Token" });
   } else {
@@ -72,6 +72,7 @@ module.exports.checkLoggedIn = async function (req, res) {
 // Update inform user
 module.exports.updateInfoUser = async function (req, res) {
   const body = req.body;
+  const id = req.tokenPayload._id;
 
   if (req.file !== undefined) {
     const path = req.file.path;
@@ -79,45 +80,51 @@ module.exports.updateInfoUser = async function (req, res) {
       error,
       result
     ) {
-      console.log(error);
+      if (error) {
+        res.status(400).json({ msg: "Err server" });
+      }
     });
     const avatarUrl = result.url;
-    await Users.findByIdAndUpdate(
-      { _id: body._id },
+    const user = await Users.findByIdAndUpdate(
+      { _id: id },
       {
         $set: { avatarUrl: avatarUrl },
       }
     );
+    user.avatarUrl = avatarUrl;
+    res.json(user);
   }
   if (body.name !== "" && body.name !== "undefined") {
     const name = body.name;
-    await Users.findByIdAndUpdate(
-      { _id: body._id },
+    const user = await Users.findByIdAndUpdate(
+      { _id: id },
       {
         $set: { name: name },
       }
     );
+    user.name = name;
+    res.json(user);
   }
   if (body.email !== "" && body.email !== "undefined") {
     const email = body.email;
-    await Users.findByIdAndUpdate(
-      { _id: body._id },
+    const user = await Users.findByIdAndUpdate(
+      { _id: id },
       {
         $set: { email: email },
       }
     );
+    res.json(user);
   }
   if (body.pass !== "undefined" && body.pass !== "") {
     const pass = body.pass;
     const password = bcrypt.hashSync(pass, 10);
-    await Users.findByIdAndUpdate(
-      { _id: body._id },
+    const user = await Users.findByIdAndUpdate(
+      { _id: id },
       {
         $set: { password: password },
       }
     );
   }
-  res.json(body);
 };
 
 module.exports.addCurrencyDefault = async function (req, res) {

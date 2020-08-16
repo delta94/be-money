@@ -4,6 +4,7 @@ const TOKEN_SECRET = "weojdjkfjowewejfwefjiwewefj";
 // check JWT
 module.exports.CheckToken = function (req, res, next) {
   const token = req.headers["auth"];
+
   if (token) {
     jwt.verify(token, TOKEN_SECRET, function (err, payload) {
       if (err) {
