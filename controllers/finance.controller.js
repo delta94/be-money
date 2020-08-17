@@ -15,7 +15,7 @@ module.exports.Income = async function (req, res) {
     amount: amount,
   };
 
-  await Finances.findOneAndUpdate(
+  const result = await Finances.findOneAndUpdate(
     { idUser: idUser },
     {
       $addToSet: { income: income },
@@ -23,7 +23,7 @@ module.exports.Income = async function (req, res) {
     { upsert: true, new: true, runValidators: true }
   );
 
-  res.json(income);
+  res.json(result.income);
 };
 // expense
 module.exports.Expense = async function (req, res) {

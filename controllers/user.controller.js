@@ -7,7 +7,7 @@ const sgMail = require("@sendgrid/mail");
 const shortid = require("shortid");
 const Finances = require("../models/finance.model");
 sgMail.setApiKey(
-  "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"
+  "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"
 );
 //Cloudinary
 cloudinary.config({
@@ -142,6 +142,7 @@ module.exports.fogotPass = async function (req, res) {
   const email = req.body.email;
   const pass = shortid.generate();
   const password = bcrypt.hashSync(pass, 10);
+  console.log(pass);
   const msg = {
     to: email,
     from: "minhthao1111@outlook.com",
